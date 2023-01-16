@@ -1,0 +1,11 @@
+{
+    "name": "carbonio-certbot",
+    "description": "Carbonio Cerbot",
+    "build_dir": "/tmp/",
+    "output": "artifacts",
+    "projects": [
+        {
+            "name": "certbot"
+        }
+    ]
+}

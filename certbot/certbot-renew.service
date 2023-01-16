@@ -1,0 +1,9 @@
+[Unit]
+Description=Renew certificates acquired via Carbonio Certbot
+Documentation=https://eff-certbot.readthedocs.io/en/stable/
+
+[Service]
+Type=oneshot
+User=zextras
+ExecStart=/opt/zextras/common/bin/certbot -q renew
+PrivateTmp=true
