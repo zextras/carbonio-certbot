@@ -83,3 +83,6 @@ package() {
   patch -Np1 -i "${srcdir}/carbonio-paths.patch"
 }
 
+postinst() {
+  systemd-tmpfiles --create "${pkgname}.conf" >/dev/null || true
+}
