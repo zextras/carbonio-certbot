@@ -4,6 +4,9 @@
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
 # Node artifact files
+bin/
+build/
+lib/
 node_modules/
 dist/
 
@@ -51,4 +54,4 @@ Thumbs.db
 artifacts
 *.deb
 *.rpm
-
+pyvenv.cfg

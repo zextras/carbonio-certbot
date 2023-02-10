@@ -1,0 +1,27 @@
+--- a/lib/python3.8/site-packages/certbot/_internal/cli/helpful.py	2023-02-10 14:22:32.273420489 +0100
++++ b/lib/python3.8/site-packages/certbot/_internal/cli/helpful.py	2023-02-10 14:22:22.808400416 +0100
+@@ -378,15 +378,15 @@
+         if self.detect_defaults:
+             kwargs = self.modify_kwargs_for_default_detection(**kwargs)
+ 
+-        if not isinstance(topic, bool) and self.visible_topics[topic]:
+-            if topic in self.groups:
+-                group = self.groups[topic]
+-                group.add_argument(*args, **kwargs)
+-            else:
+-                self.parser.add_argument(*args, **kwargs)
+-        else:
+-            kwargs["help"] = argparse.SUPPRESS
+-            self.parser.add_argument(*args, **kwargs)
++        # if not isinstance(topic, bool) and self.visible_topics[topic]:
++        #     if topic in self.groups:
++        #         group = self.groups[topic]
++        #         group.add_argument(*args, **kwargs)
++        #     else:
++        #         self.parser.add_argument(*args, **kwargs)
++        # else:
++        kwargs["help"] = argparse.SUPPRESS
++        self.parser.add_argument(*args, **kwargs)
+ 
+     def modify_kwargs_for_default_detection(self, **kwargs: Any) -> Dict[str, Any]:
+         """Modify an arg so we can check if it was set by the user.

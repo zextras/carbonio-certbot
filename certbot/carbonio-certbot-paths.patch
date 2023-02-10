@@ -1,5 +1,5 @@
---- a/opt/zextras/common/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:49:31.088968276 +0000
-+++ b/opt/zextras/common/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:52:18.833408420 +0000
+--- a/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:49:31.088968276 +0000
++++ b/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:52:18.833408420 +0000
 @@ -96,9 +96,9 @@
      'logs': 'C:\\Certbot\\log',
  }
