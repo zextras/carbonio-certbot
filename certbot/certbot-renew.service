@@ -5,5 +5,5 @@ Documentation=https://eff-certbot.readthedocs.io/en/stable/
 [Service]
 Type=oneshot
 User=zextras
-ExecStart=/opt/zextras/common/bin/certbot -q renew
+ExecStart=/opt/zextras/common/certbot/bin/certbot -q renew
 PrivateTmp=true

@@ -1,5 +1,5 @@
---- a/opt/zextras/common/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:49:31.088968276 +0000
-+++ b/opt/zextras/common/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:52:18.833408420 +0000
+--- a/opt/zextras/common/certbot/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:49:31.088968276 +0000
++++ b/opt/zextras/common/certbot/lib/python3.8/site-packages/certbot/compat/misc.py	2023-01-12 15:52:18.833408420 +0000
 @@ -96,9 +96,9 @@
      'logs': 'C:\\Certbot\\log',
  }
@@ -7,7 +7,7 @@
 -    'config': '/etc/letsencrypt',
 -    'work': '/var/lib/letsencrypt',
 -    'logs': '/var/log/letsencrypt',
-+    'config': '/opt/zextras/common/etc/letsencrypt',
++    'config': '/opt/zextras/common/certbot/etc/letsencrypt',
 +    'work': '/var/lib/carbonio-letsencrypt',
 +    'logs': '/var/log/carbonio/letsencrypt',
  }
