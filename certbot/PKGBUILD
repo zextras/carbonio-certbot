@@ -92,4 +92,6 @@ preinst() {
 
 postinst() {
   systemd-tmpfiles --create "${pkgname}.conf" >/dev/null || true
+
+  chown zextras:zextras /opt/zextras/common/certbot/etc/letsencrypt
 }
