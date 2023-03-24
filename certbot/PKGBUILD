@@ -88,10 +88,9 @@ preinst() {
     groupadd -r 'zextras'
   getent passwd 'zextras' >/dev/null ||
     useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
+  chgrp -R 'zextras' /opt/zextras/common/certbot/etc/letsencrypt/
 }
 
 postinst() {
   systemd-tmpfiles --create "${pkgname}.conf" >/dev/null || true
-
-  chown zextras:zextras /opt/zextras/common/certbot/etc/letsencrypt
 }
