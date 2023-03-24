@@ -83,11 +83,13 @@ package() {
   patch -Np1 -i "${srcdir}/carbonio-paths.patch"
 }
 
-postinst() {
+preinst() {
   getent group 'zextras' >/dev/null ||
     groupadd -r 'zextras'
   getent passwd 'zextras' >/dev/null ||
     useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
+}
 
+postinst() {
   systemd-tmpfiles --create "${pkgname}.conf" >/dev/null || true
 }
