@@ -4,7 +4,7 @@ targets=(
 )
 pkgname="carbonio-certbot"
 pkgver="2.3.0"
-pkgrel="2"
+pkgrel="3"
 pkgdesc="An ACME client for Carbonio"
 pkgdesclong=(
   "An ACME client for Carbonio"
@@ -67,10 +67,19 @@ package() {
   install -Ddm755 "${pkgdir}/var/log/carbonio/letsencrypt/"
   install -Ddm755 "${pkgdir}/opt/zextras/.well-known/acme-challenge"
 
+  # on some distros, prefix is concatenated to local and immutable by default
+  # let's normalize this prefix path
+  if [ -d "${pkgdir}/opt/zextras/common/certbot/local" ]; then
+    mv "${pkgdir}/opt/zextras/common/certbot/local/"* \
+      "${pkgdir}/opt/zextras/common/certbot/"
+    rm -rf "${pkgdir}/opt/zextras/common/certbot/local"
+  fi
+
   # to set proper PYTHONPATH we need a little bash wrapper
   # we move official executable to carbonio-certbot ...
   mv "${pkgdir}/opt/zextras/common/certbot/bin/certbot" \
     "${pkgdir}/opt/zextras/common/certbot/bin/carbonio-certbot"
+
   # ... after we rename the wrapper as certbot
   install -Dm755 "${srcdir}/certbot-wrapper.sh" \
     "${pkgdir}/opt/zextras/common/bin/certbot"
@@ -81,7 +90,7 @@ package() {
   rm "${pkgdir}"/opt/zextras/common/certbot/bin/normalizer
 
   # Apply custom paths
-  cd "${pkgdir}"
+  cd $(find ${pkgdir} -name "misc.py" | xargs dirname)
   patch -Np1 -i "${srcdir}/carbonio-paths.patch"
 }
 
