@@ -55,7 +55,37 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: 'artifacts/*.deb', fingerprint: true
+                            archiveArtifacts artifacts: 'artifacts/*focal*.deb', fingerprint: true
+                        }
+                    }
+                }
+                stage('Ubuntu 22') {
+                    agent {
+                        node {
+                            label 'pacur-agent-ubuntu-22.04-v1'
+                        }
+                    }
+                    steps {
+                        unstash 'project'
+                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
+                            passwordVariable: 'SECRET',
+                            usernameVariable: 'USERNAME')]) {
+                            sh 'echo "machine zextras.jfrog.io" >> auth.conf'
+                            sh 'echo "login $USERNAME" >> auth.conf'
+                            sh 'echo "password $SECRET" >> auth.conf'
+                            sh 'sudo mv auth.conf /etc/apt'
+                }
+                            sh '''
+sudo echo "deb https://zextras.jfrog.io/artifactory/ubuntu-rc jammy main" > zextras.list
+sudo mv zextras.list /etc/apt/sources.list.d/
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243E584A21
+'''
+                        sh 'sudo pacur build ubuntu-jammy .'
+                        stash includes: 'artifacts/', name: 'artifacts-ubuntu-jammy'
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'artifacts/*jammy*.deb', fingerprint: true
                         }
                     }
                 }
@@ -97,6 +127,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
             }
             steps {
                 unstash 'artifacts-ubuntu-focal'
+                unstash 'artifacts-ubuntu-jammy'
                 unstash 'artifacts-rocky-8'
                 script {
                     def server = Artifactory.server 'zextras-artifactory'
@@ -106,9 +137,14 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     uploadSpec = '''{
                         "files": [
                             {
-                                "pattern": "artifacts/*.deb",
+                                "pattern": "artifacts/*focal*.deb",
                                 "target": "ubuntu-playground/pool/",
                                 "props": "deb.distribution=focal;deb.component=main;deb.architecture=amd64"
+                            },
+                            {
+                                "pattern": "artifacts/*jammy*.deb",
+                                "target": "ubuntu-playground/pool/",
+                                "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
                             },
                             {
                                 "pattern": "artifacts/(carbonio-certbot)-(*).rpm",
@@ -127,6 +163,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
             }
             steps {
                 unstash 'artifacts-ubuntu-focal'
+                unstash 'artifacts-ubuntu-jammy'
                 unstash 'artifacts-rocky-8'
 
                 script {
@@ -144,6 +181,11 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 "pattern": "artifacts/*focal*.deb",
                                 "target": "ubuntu-rc/pool/",
                                 "props": "deb.distribution=focal;deb.component=main;deb.architecture=amd64"
+                            }
+                            {
+                                "pattern": "artifacts/*jammy*.deb",
+                                "target": "ubuntu-rc/pool/",
+                                "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
                             }
                         ]
                     }'''
