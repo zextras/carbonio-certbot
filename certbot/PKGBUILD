@@ -1,6 +1,6 @@
 pkgname="carbonio-certbot"
-pkgver="2.3.0"
-pkgrel="3"
+pkgver="2.7.2"
+pkgrel="1"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
