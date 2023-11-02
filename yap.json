@@ -1,7 +1,7 @@
 {
     "name": "carbonio-certbot",
     "description": "Carbonio Cerbot",
-    "build_dir": "/tmp/",
+    "buildDir": "/tmp/",
     "output": "artifacts",
     "projects": [
         {
