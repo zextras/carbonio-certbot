@@ -1,52 +1,45 @@
-targets=(
-   "centos"
-   "ubuntu"
-)
 pkgname="carbonio-certbot"
-pkgver="2.3.0"
-pkgrel="3"
+pkgver="2.7.2"
+pkgrel="1"
 pkgdesc="An ACME client for Carbonio"
-pkgdesclong=(
-  "An ACME client for Carbonio"
-)
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
 section="admin"
 priority="optional"
-arch="amd64"
-license=("Apache")
+arch=('x86_64')
+license=("Apache-2.0")
 
-depends:apt=(
-  "python3>=3.8"
+depends=(
+  "python3"
   "python3-setuptools"
 )
-makedepends:apt=(
-  "python3-pkg-resources"
-  "python3-pip"
-)
-
-depends:yum=(
+depends_rocky_8=(
   "python38"
   "python38-setuptools"
 )
-makedepends:yum=(
+makedepends__apt=(
+  "python3-pkg-resources"
+  "python3-pip"
+)
+makedepends__yum=(
+  "python3-pip"
+)
+makedepends__rocky_8=(
   "python38-pip"
 )
 
-sources=(
+source=(
   "carbonio-paths.patch"
   "certbot-wrapper.sh"
   "certbot-renew.service"
   "certbot-renew.timer"
   "tmpfiles.conf"
 )
-hashsums=(
-  "skip"
-  "skip"
-  "skip"
-  "skip"
-  "skip"
-)
+sha256sums=('5482e89a6fbe724dd6e3a88308edda8e475d1234534a7fe6187cd8b8ce5acb21'
+  '01ad5a09ba1a8d11a42bf19a96e773884565c3b8dada9d176f6531cef0a6e7aa'
+  '6d81a62d0a6585487f5a72e3270e1fe12ab9555e2b34928ac850789b3b2ff94a'
+  '49897471771049ec94ba1b0f56d6252d9c124dbe16ff4b9310e695f1fa0ce794'
+  'd5f0babf32898394183f557bb40291ad0d3d9b9e03202ccbf2342db35d8ac8b1')
 
 build() {
   pip3 install \
@@ -100,5 +93,5 @@ postinst() {
   getent passwd 'zextras' >/dev/null ||
     useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
 
-  systemd-tmpfiles --create "${pkgname}.conf" >/dev/null || true
+  systemd-tmpfiles --create carbonio-certbot.conf >/dev/null || true
 }

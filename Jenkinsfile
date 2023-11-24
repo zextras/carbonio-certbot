@@ -32,7 +32,7 @@ pipeline {
                 stage('Ubuntu 20') {
                     agent {
                         node {
-                            label 'pacur-agent-ubuntu-20.04-v1'
+                            label 'yap-agent-ubuntu-20.04-v2'
                         }
                     }
                     steps {
@@ -50,8 +50,8 @@ sudo echo "deb https://zextras.jfrog.io/artifactory/ubuntu-rc focal main" > zext
 sudo mv zextras.list /etc/apt/sources.list.d/
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243E584A21
 '''
-                        sh 'sudo pacur build ubuntu-focal .'
-                        stash includes: 'artifacts/', name: 'artifacts-ubuntu-focal'
+                        sh 'sudo yap build ubuntu-focal .'
+                        stash includes: 'artifacts/*focal*.deb', name: 'artifacts-ubuntu-focal'
                     }
                     post {
                         always {
@@ -62,7 +62,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                 stage('Ubuntu 22') {
                     agent {
                         node {
-                            label 'pacur-agent-ubuntu-22.04-v1'
+                            label 'yap-agent-ubuntu-22.04-v2'
                         }
                     }
                     steps {
@@ -80,8 +80,8 @@ sudo echo "deb https://zextras.jfrog.io/artifactory/ubuntu-rc jammy main" > zext
 sudo mv zextras.list /etc/apt/sources.list.d/
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243E584A21
 '''
-                        sh 'sudo pacur build ubuntu-jammy .'
-                        stash includes: 'artifacts/', name: 'artifacts-ubuntu-jammy'
+                        sh 'sudo yap build ubuntu-jammy .'
+                        stash includes: 'artifacts/*jammy*.deb', name: 'artifacts-ubuntu-jammy'
                     }
                     post {
                         always {
@@ -89,10 +89,10 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                         }
                     }
                 }
-                stage('Rocky 8') {
+                stage('RHEL 8') {
                     agent {
                         node {
-                            label 'pacur-agent-rocky-8-v1'
+                            label 'yap-agent-rocky-8-v2'
                         }
                     }
                     steps {
@@ -108,12 +108,40 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 sh 'sudo mv zextras.repo /etc/yum.repos.d/zextras.repo'
                                 sh 'sudo yum install -y epel-release' // needed for ragel
                         }
-                        sh 'sudo pacur build rocky-8 .'
-                        stash includes: 'artifacts/', name: 'artifacts-rocky-8'
+                        sh 'sudo yap build rocky-8 .'
+                        stash includes: 'artifacts/x86_64/*el8*.rpm', name: 'artifacts-rocky-8'
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: 'artifacts/*.rpm', fingerprint: true
+                            archiveArtifacts artifacts: 'artifacts/x86_64/*el8*.rpm', fingerprint: true
+                        }
+                    }
+                }
+                stage('RHEL 9') {
+                    agent {
+                        node {
+                            label 'yap-agent-rocky-9-v2'
+                        }
+                    }
+                    steps {
+                        unstash 'project'
+                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
+                            passwordVariable: 'SECRET',
+                            usernameVariable: 'USERNAME')]) {
+                                sh 'echo "[Zextras]" > zextras.repo'
+                                sh 'echo "baseurl=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/rhel9-rc/" >> zextras.repo'
+                                sh 'echo "enabled=1" >> zextras.repo'
+                                sh 'echo "gpgcheck=0" >> zextras.repo'
+                                sh 'echo "gpgkey=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/rhel9-rc/repomd.xml.key" >> zextras.repo'
+                                sh 'sudo mv zextras.repo /etc/yum.repos.d/zextras.repo'
+                                sh 'sudo yum install -y epel-release' // needed for ragel
+                        }
+                        sh 'sudo yap build rocky-9 .'
+                        stash includes: 'artifacts/x86_64/*el9*.rpm', name: 'artifacts-rocky-9'
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'artifacts/x86_64/*el9*.rpm', fingerprint: true
                         }
                     }
                 }
@@ -129,6 +157,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                 unstash 'artifacts-ubuntu-focal'
                 unstash 'artifacts-ubuntu-jammy'
                 unstash 'artifacts-rocky-8'
+                unstash 'artifacts-rocky-9'
                 script {
                     def server = Artifactory.server 'zextras-artifactory'
                     def buildInfo
@@ -147,8 +176,13 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
                             },
                             {
-                                "pattern": "artifacts/(carbonio-certbot)-(*).rpm",
-                                "target": "centos8-playground/zextras/{1}/{1}-{2}.rpm",
+                                "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el8.x86_64.rpm",
+                                "target": "centos8-playground/zextras/{1}/{1}-{2}.el8.x86_64.rpm",
+                                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+                            },
+                            {
+                                "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el9.x86_64.rpm",
+                                "target": "rhel9-playground/zextras/{1}/{1}-{2}.el9.x86_64.rpm",
                                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
                             }
                         ]
@@ -165,6 +199,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                 unstash 'artifacts-ubuntu-focal'
                 unstash 'artifacts-ubuntu-jammy'
                 unstash 'artifacts-rocky-8'
+                unstash 'artifacts-rocky-9'
 
                 script {
                     def server = Artifactory.server 'zextras-artifactory'
@@ -204,14 +239,14 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     Artifactory.addInteractivePromotion server: server, promotionConfig: config, displayName: 'Ubuntu Promotion to Release'
                     server.publishBuildInfo buildInfo
 
-                    //rocky8
+                    //rhel8
                     buildInfo = Artifactory.newBuildInfo()
                     buildInfo.name += "-centos8"
                     uploadSpec = '''{
                         "files": [
                             {
-                                "pattern": "artifacts/(carbonio-certbot)-(*).rpm",
-                                "target": "centos8-rc/zextras/{1}/{1}-{2}.rpm",
+                                "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el8.x86_64.rpm",
+                                "target": "centos8-rc/zextras/{1}/{1}-{2}.el8.x86_64.rpm",
                                 "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
                             }
                         ]
@@ -229,7 +264,35 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                             'copy'               : true,
                             'failFast'           : true
                     ]
-                    Artifactory.addInteractivePromotion server: server, promotionConfig: config, displayName: "Centos8 Promotion to Release"
+                    Artifactory.addInteractivePromotion server: server, promotionConfig: config, displayName: "RHEL8 Promotion to Release"
+                    server.publishBuildInfo buildInfo
+
+                    //rhel9
+                    buildInfo = Artifactory.newBuildInfo()
+                    buildInfo.name += "-rhel9"
+                    uploadSpec = '''{
+                        "files": [
+                            {
+                                "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el9.x86_64.rpm",
+                                "target": "rhel9-rc/zextras/{1}/{1}-{2}.el9.x86_64.rpm",
+                                "props": "rpm.metadata.arch=x86_64;rpm.metadata.vendor=zextras"
+                            }
+                        ]
+                    }'''
+
+                    server.upload spec: uploadSpec, buildInfo: buildInfo, failNoOp: false
+                    config = [
+                            'buildName'          : buildInfo.name,
+                            'buildNumber'        : buildInfo.number,
+                            'sourceRepo'         : 'rhel9-rc',
+                            'targetRepo'         : 'rhel9-release',
+                            'comment'            : 'Do not change anything! Just press the button',
+                            'status'             : 'Released',
+                            'includeDependencies': false,
+                            'copy'               : true,
+                            'failFast'           : true
+                    ]
+                    Artifactory.addInteractivePromotion server: server, promotionConfig: config, displayName: "RHEL9 Promotion to Release"
                     server.publishBuildInfo buildInfo
                 }
             }
