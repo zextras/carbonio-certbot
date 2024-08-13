@@ -68,6 +68,18 @@ build__ubuntu_jammy() {
     "${pkgdir}/opt/zextras/common/bin/certbot"
 }
 
+build__ubuntu_noble() {
+  pip3 install \
+    certbot=="${pkgver}" \
+    --prefix="${pkgdir}/opt/zextras/common/certbot"
+
+  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+
+  sed -i "s/PYTHON_VER/3.12/g" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+}
+
 build__rocky_8() {
   pip3 install \
     certbot=="${pkgver}" \

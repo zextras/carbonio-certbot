@@ -37,19 +37,6 @@ pipeline {
                     }
                     steps {
                         unstash 'project'
-                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
-                            passwordVariable: 'SECRET',
-                            usernameVariable: 'USERNAME')]) {
-                            sh 'echo "machine zextras.jfrog.io" >> auth.conf'
-                            sh 'echo "login $USERNAME" >> auth.conf'
-                            sh 'echo "password $SECRET" >> auth.conf'
-                            sh 'sudo mv auth.conf /etc/apt'
-                }
-                            sh '''
-sudo echo "deb https://zextras.jfrog.io/artifactory/ubuntu-rc focal main" > zextras.list
-sudo mv zextras.list /etc/apt/sources.list.d/
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243E584A21
-'''
                         sh 'sudo yap build ubuntu-focal .'
                         stash includes: 'artifacts/*focal*.deb', name: 'artifacts-ubuntu-focal'
                     }
@@ -67,25 +54,29 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     }
                     steps {
                         unstash 'project'
-                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
-                            passwordVariable: 'SECRET',
-                            usernameVariable: 'USERNAME')]) {
-                            sh 'echo "machine zextras.jfrog.io" >> auth.conf'
-                            sh 'echo "login $USERNAME" >> auth.conf'
-                            sh 'echo "password $SECRET" >> auth.conf'
-                            sh 'sudo mv auth.conf /etc/apt'
-                }
-                            sh '''
-sudo echo "deb https://zextras.jfrog.io/artifactory/ubuntu-rc jammy main" > zextras.list
-sudo mv zextras.list /etc/apt/sources.list.d/
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243E584A21
-'''
                         sh 'sudo yap build ubuntu-jammy .'
                         stash includes: 'artifacts/*jammy*.deb', name: 'artifacts-ubuntu-jammy'
                     }
                     post {
                         always {
                             archiveArtifacts artifacts: 'artifacts/*jammy*.deb', fingerprint: true
+                        }
+                    }
+                }
+                stage('Ubuntu 24') {
+                    agent {
+                        node {
+                            label 'yap-agent-ubuntu-24.04-v2'
+                        }
+                    }
+                    steps {
+                        unstash 'project'
+                        sh 'sudo yap build ubuntu-noble .'
+                        stash includes: 'artifacts/*noble*.deb', name: 'artifacts-ubuntu-noble'
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'artifacts/*noble*.deb', fingerprint: true
                         }
                     }
                 }
@@ -97,17 +88,6 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     }
                     steps {
                         unstash 'project'
-                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
-                            passwordVariable: 'SECRET',
-                            usernameVariable: 'USERNAME')]) {
-                                sh 'echo "[Zextras]" > zextras.repo'
-                                sh 'echo "baseurl=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/centos8-rc/" >> zextras.repo'
-                                sh 'echo "enabled=1" >> zextras.repo'
-                                sh 'echo "gpgcheck=0" >> zextras.repo'
-                                sh 'echo "gpgkey=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/centos8-rc/repomd.xml.key" >> zextras.repo'
-                                sh 'sudo mv zextras.repo /etc/yum.repos.d/zextras.repo'
-                                sh 'sudo yum install -y epel-release' // needed for ragel
-                        }
                         sh 'sudo yap build rocky-8 .'
                         stash includes: 'artifacts/x86_64/*el8*.rpm', name: 'artifacts-rocky-8'
                     }
@@ -125,17 +105,6 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                     }
                     steps {
                         unstash 'project'
-                        withCredentials([usernamePassword(credentialsId: 'artifactory-jenkins-gradle-properties-splitted',
-                            passwordVariable: 'SECRET',
-                            usernameVariable: 'USERNAME')]) {
-                                sh 'echo "[Zextras]" > zextras.repo'
-                                sh 'echo "baseurl=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/rhel9-rc/" >> zextras.repo'
-                                sh 'echo "enabled=1" >> zextras.repo'
-                                sh 'echo "gpgcheck=0" >> zextras.repo'
-                                sh 'echo "gpgkey=https://$USERNAME:$SECRET@zextras.jfrog.io/artifactory/rhel9-rc/repomd.xml.key" >> zextras.repo'
-                                sh 'sudo mv zextras.repo /etc/yum.repos.d/zextras.repo'
-                                sh 'sudo yum install -y epel-release' // needed for ragel
-                        }
                         sh 'sudo yap build rocky-9 .'
                         stash includes: 'artifacts/x86_64/*el9*.rpm', name: 'artifacts-rocky-9'
                     }
@@ -156,6 +125,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
             steps {
                 unstash 'artifacts-ubuntu-focal'
                 unstash 'artifacts-ubuntu-jammy'
+                unstash 'artifacts-ubuntu-noble'
                 unstash 'artifacts-rocky-8'
                 unstash 'artifacts-rocky-9'
                 script {
@@ -174,6 +144,11 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 "pattern": "artifacts/*jammy*.deb",
                                 "target": "ubuntu-playground/pool/",
                                 "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
+                            },
+                            {
+                                "pattern": "artifacts/*noble*.deb",
+                                "target": "ubuntu-playground/pool/",
+                                "props": "deb.distribution=noble;deb.component=main;deb.architecture=amd64"
                             },
                             {
                                 "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el8.x86_64.rpm",
@@ -198,6 +173,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
             steps {
                 unstash 'artifacts-ubuntu-focal'
                 unstash 'artifacts-ubuntu-jammy'
+                unstash 'artifacts-ubuntu-noble'
                 unstash 'artifacts-rocky-8'
                 unstash 'artifacts-rocky-9'
                 script {
@@ -216,6 +192,11 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 "pattern": "artifacts/*jammy*.deb",
                                 "target": "ubuntu-devel/pool/",
                                 "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
+                            },
+                            {
+                                "pattern": "artifacts/*noble*.deb",
+                                "target": "ubuntu-devel/pool/",
+                                "props": "deb.distribution=noble;deb.component=main;deb.architecture=amd64"
                             },
                             {
                                 "pattern": "artifacts/x86_64/(carbonio-certbot)-(*).el8.x86_64.rpm",
@@ -240,6 +221,7 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
             steps {
                 unstash 'artifacts-ubuntu-focal'
                 unstash 'artifacts-ubuntu-jammy'
+                unstash 'artifacts-ubuntu-noble'
                 unstash 'artifacts-rocky-8'
                 unstash 'artifacts-rocky-9'
 
@@ -263,6 +245,11 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 52FD40243
                                 "pattern": "artifacts/*jammy*.deb",
                                 "target": "ubuntu-rc/pool/",
                                 "props": "deb.distribution=jammy;deb.component=main;deb.architecture=amd64"
+                            },
+                            {
+                                "pattern": "artifacts/*noble*.deb",
+                                "target": "ubuntu-rc/pool/",
+                                "props": "deb.distribution=noble;deb.component=main;deb.architecture=amd64"
                             }
                         ]
                     }'''
