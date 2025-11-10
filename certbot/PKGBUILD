@@ -1,6 +1,6 @@
 pkgname="carbonio-certbot"
-pkgver="2.7.2"
-pkgrel="2"
+pkgver="2.11.1"
+pkgrel="1"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -42,21 +42,6 @@ sha256sums=(
   '49897471771049ec94ba1b0f56d6252d9c124dbe16ff4b9310e695f1fa0ce794'
   'd5f0babf32898394183f557bb40291ad0d3d9b9e03202ccbf2342db35d8ac8b1'
 )
-
-build__ubuntu_focal() {
-  pip3 install \
-    certbot=="${pkgver}" \
-    --prefix="${pkgdir}/opt/zextras/common/certbot"
-
-  # wrapper for certbot entrypoint
-  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-
-  # Replace python version and prefix according to distro
-  # without modify the start script in srcdir.
-  sed -i "s/PYTHON_VER/3.8/g" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-}
 
 build__ubuntu_jammy() {
   pip3 install \
