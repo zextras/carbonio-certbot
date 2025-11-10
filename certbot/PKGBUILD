@@ -45,6 +45,7 @@ sha256sums=(
 
 build__ubuntu_jammy() {
   pip3 install \
+    --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
@@ -57,6 +58,7 @@ build__ubuntu_jammy() {
 
 build__ubuntu_noble() {
   pip3 install \
+    --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
@@ -69,6 +71,7 @@ build__ubuntu_noble() {
 
 build__rocky_8() {
   pip3 install \
+    --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
@@ -81,6 +84,7 @@ build__rocky_8() {
 
 build__rocky_9() {
   pip3 install \
+    --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
