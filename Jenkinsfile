@@ -1,5 +1,5 @@
 library(
-    identifier: 'jenkins-packages-build-library@1.0.5',
+    identifier: 'jenkins-packages-build-library@1.1.0',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         remote: 'git@github.com:zextras/jenkins-packages-build-library.git',
