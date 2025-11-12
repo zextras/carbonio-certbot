@@ -59,7 +59,7 @@ pipeline {
         stage('Upload artifacts')
         {
             when {
-                shouldUpload()
+                uploadStage.shouldUpload()
             }
             tools {
                 jfrog 'jfrog-cli'
