@@ -23,11 +23,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
     }
-
-    tools {
-        jfrog 'jfrog-cli'
-    }
-
+    
     stages {
         stage('Setup') {
             steps {
