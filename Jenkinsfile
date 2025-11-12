@@ -1,5 +1,5 @@
 library(
-    identifier: 'jenkins-lib-common@1.1.0',
+    identifier: 'jenkins-lib-common@1.1.1',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
@@ -23,7 +23,7 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
     }
-    
+
     stages {
         stage('Setup') {
             steps {
@@ -58,6 +58,9 @@ pipeline {
 
         stage('Upload artifacts')
         {
+            when {
+                shouldUpload()
+            }
             tools {
                 jfrog 'jfrog-cli'
             }
