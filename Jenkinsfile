@@ -1,5 +1,5 @@
 library(
-    identifier: 'jenkins-lib-common@1.1.1',
+    identifier: 'jenkins-lib-common@1.1.0',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         credentialsId: 'jenkins-integration-with-github-account',
@@ -22,6 +22,10 @@ pipeline {
         skipDefaultCheckout()
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
+    }
+
+    tools {
+        jfrog 'jfrog-cli'
     }
 
     stages {
