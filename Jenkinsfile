@@ -1,8 +1,8 @@
 library(
-    identifier: 'jenkins-packages-build-library@1.0.5',
+    identifier: 'jenkins-lib-common@1.1.1',
     retriever: modernSCM([
         $class: 'GitSCMSource',
-        remote: 'git@github.com:zextras/jenkins-packages-build-library.git',
+        remote: 'git@github.com:zextras/jenkins-lib-common.git',
         credentialsId: 'jenkins-integration-with-github-account'
     ])
 )
@@ -23,23 +23,13 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 1, unit: 'HOURS')
     }
-
-    parameters {
-        booleanParam defaultValue: false, 
-        description: 'Whether to upload the packages in devel repositories', 
-        name: 'PLAYGROUND'
-    }
-
-    tools {
-        jfrog 'jfrog-cli'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Setup') {
             steps {
                 checkout scm
                 script {
                     gitMetadata()
+                    properties(defaultPipelineProperties())
                 }
             }
         }
@@ -67,6 +57,9 @@ pipeline {
 
         stage('Upload artifacts')
         {
+            tools {
+                jfrog 'jfrog-cli'
+            }
             steps {
                 uploadStage(
                     packages: yapHelper.getPackageNames()
