@@ -62,6 +62,9 @@ pipeline {
 
         stage('Upload artifacts')
         {
+            tools {
+                jfrog 'jfrog-cli'
+            }
             steps {
                 uploadStage(
                     packages: yapHelper.resolvePackageNames()
