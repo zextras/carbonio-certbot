@@ -1,5 +1,5 @@
 pkgname="carbonio-certbot"
-pkgver="2.11.1"
+pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
 pkgrel="1"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
@@ -132,10 +132,10 @@ package() {
 }
 
 postinst() {
-  getent group 'zextras' >/dev/null ||
-    groupadd -r 'zextras'
-  getent passwd 'zextras' >/dev/null ||
-    useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
+  getent group 'zextras' >/dev/null \
+    || groupadd -r 'zextras'
+  getent passwd 'zextras' >/dev/null \
+    || useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
 
   systemd-tmpfiles --create carbonio-certbot.conf >/dev/null || true
 }
