@@ -30,18 +30,17 @@ makedepends__rocky_8=(
 
 source=(
   "carbonio-paths.patch"
-  "certbot-wrapper.sh.in"
+  "systemd-tmpfile.conf"
   "certbot-renew.service"
   "certbot-renew.timer"
-  "tmpfiles.conf"
+  "certbot-wrapper.sh.in"
 )
 sha256sums=(
   '5482e89a6fbe724dd6e3a88308edda8e475d1234534a7fe6187cd8b8ce5acb21'
-  'ffbe5973500c99b4b017c2c1be8d2a780566469903971a14b02b5b696e60024f'
+  'a42dacab0102128346a298d6ba85239694f790265861d21771839c265e7b2d39'
   '6d81a62d0a6585487f5a72e3270e1fe12ab9555e2b34928ac850789b3b2ff94a'
   '49897471771049ec94ba1b0f56d6252d9c124dbe16ff4b9310e695f1fa0ce794'
-  'd5f0babf32898394183f557bb40291ad0d3d9b9e03202ccbf2342db35d8ac8b1'
-)
+  'ffbe5973500c99b4b017c2c1be8d2a780566469903971a14b02b5b696e60024f')
 
 build__ubuntu_jammy() {
   pip3 install \
@@ -102,7 +101,7 @@ package() {
   install -Dm644 "${srcdir}/certbot-renew.timer" \
     "${pkgdir}/lib/systemd/system/${pkgname}.timer"
 
-  install -Dm644 "${srcdir}/tmpfiles.conf" \
+  install -Dm644 "${srcdir}/systemd-tmpfile.conf" \
     "${pkgdir}/lib/tmpfiles.d/${pkgname}.conf"
 
   install -Ddm755 "${pkgdir}/var/log/carbonio/letsencrypt/"
