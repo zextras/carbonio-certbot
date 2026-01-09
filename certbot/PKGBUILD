@@ -131,10 +131,6 @@ package() {
 }
 
 postinst() {
-  getent group 'zextras' >/dev/null \
-    || groupadd -r 'zextras'
-  getent passwd 'zextras' >/dev/null \
-    || useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
-
+  # zextras user/group provided by carbonio-core via sysusers.d
   systemd-tmpfiles --create /usr/lib/tmpfiles.d/carbonio-certbot.conf >/dev/null 2>&1 || :
 }
