@@ -1,6 +1,6 @@
 pkgname="carbonio-certbot"
 pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
-pkgrel="1"
+pkgrel="2"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -96,13 +96,13 @@ build__rocky_9() {
 
 package() {
   install -Dm644 "${srcdir}/certbot-renew.service" \
-    "${pkgdir}/lib/systemd/system/${pkgname}.service"
+    "${pkgdir}/usr/lib/systemd/system/${pkgname}.service"
 
   install -Dm644 "${srcdir}/certbot-renew.timer" \
-    "${pkgdir}/lib/systemd/system/${pkgname}.timer"
+    "${pkgdir}/usr/lib/systemd/system/${pkgname}.timer"
 
   install -Dm644 "${srcdir}/systemd-tmpfile.conf" \
-    "${pkgdir}/lib/tmpfiles.d/${pkgname}.conf"
+    "${pkgdir}/usr/lib/tmpfiles.d/${pkgname}.conf"
 
   install -Ddm755 "${pkgdir}/var/log/carbonio/letsencrypt/"
   install -Ddm755 "${pkgdir}/opt/zextras/.well-known/acme-challenge"
@@ -136,5 +136,5 @@ postinst() {
   getent passwd 'zextras' >/dev/null \
     || useradd -r -M -d '/opt/zextras' -g 'zextras' -s /bin/bash 'zextras'
 
-  systemd-tmpfiles --create carbonio-certbot.conf >/dev/null || true
+  systemd-tmpfiles --create /usr/lib/tmpfiles.d/carbonio-certbot.conf >/dev/null 2>&1 || :
 }
