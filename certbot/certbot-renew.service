@@ -6,4 +6,47 @@ Documentation=https://eff-certbot.readthedocs.io/en/stable/
 Type=oneshot
 User=zextras
 ExecStart=/opt/zextras/common/bin/certbot -q renew
-PrivateTmp=true
+
+# Security hardening (enhanced profile - certificate renewal)
+# Certbot needs: network access, write to cert dirs, run reload hooks
+
+# Filesystem protection
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ReadWritePaths=/opt/zextras/ssl /opt/zextras/conf/nginx /etc/letsencrypt
+
+# Privilege restrictions
+NoNewPrivileges=yes
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=
+
+# Kernel protection
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+ProtectKernelLogs=yes
+ProtectHostname=yes
+ProtectClock=yes
+
+# Namespace restrictions
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+# Network - certbot needs HTTPS to ACME servers
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# System call filtering
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+SystemCallErrorNumber=EPERM
+SystemCallArchitectures=native
+
+# Memory protection
+MemoryDenyWriteExecute=yes
+
+# IPC cleanup
+RemoveIPC=yes
