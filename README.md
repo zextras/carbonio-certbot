@@ -2,26 +2,44 @@
 
 Carbonio Certbot is an ACME client package for the Carbonio platform, providing automated SSL/TLS certificate management through Let's Encrypt or other ACME-compatible certificate authorities.
 
-**Quick Start:**
+## Quick Start
+
+### Prerequisites
+
+- Docker or Podman installed
+- Make
+
+### Building Packages
 
 ```bash
-# Build the package for Ubuntu 22.04
+# Build packages for Ubuntu 22.04
 make build TARGET=ubuntu-jammy
 
-# Build for Rocky Linux 9
+# Build packages for Rocky Linux 9
 make build TARGET=rocky-9
 
-# See all available commands
-make help
+# Build packages for Ubuntu 24.04
+make build TARGET=ubuntu-noble
 ```
 
-## Features
+### Supported Targets
 
-- Pre-configured Certbot installation for Carbonio
-- Systemd service and timer for automatic certificate renewal
-- Custom wrapper script for proper Python environment setup
-- Support for multiple Linux distributions (Ubuntu, Rocky Linux)
-- Integrated with Carbonio's directory structure at `/opt/zextras`
+- `ubuntu-jammy` - Ubuntu 22.04 LTS
+- `ubuntu-noble` - Ubuntu 24.04 LTS
+- `rocky-8` - Rocky Linux 8
+- `rocky-9` - Rocky Linux 9
+
+### Configuration
+
+You can customize the build by setting environment variables:
+
+```bash
+# Use a specific container runtime
+make build TARGET=ubuntu-jammy CONTAINER_RUNTIME=docker
+
+# Use a different output directory
+make build TARGET=rocky-9 OUTPUT_DIR=./my-packages
+```
 
 ## Installation
 
@@ -67,30 +85,6 @@ systemctl status carbonio-certbot.timer
 ```bash
 /opt/zextras/common/bin/certbot renew
 ```
-
-## Building
-
-This package uses YAP (Yet Another Packager) in Docker/Podman containers for building. See all available build commands with `make help`.
-
-To build for a specific distribution:
-
-```bash
-# Build for Ubuntu 22.04
-make build TARGET=ubuntu-jammy
-
-# Build for Rocky Linux 9
-make build TARGET=rocky-9
-
-# List all supported targets
-make list-targets
-
-# Clean build artifacts
-make clean
-```
-
-Build artifacts will be placed in the `artifacts/` directory.
-
-**Supported targets:** ubuntu-jammy, ubuntu-noble, rocky-8, rocky-9
 
 ## Contributing
 
