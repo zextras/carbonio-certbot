@@ -31,6 +31,7 @@ CONTAINER_NAME ?= yap-$(TARGET)
 # Container options
 CONTAINER_OPTS = --rm -ti \
 	--name $(CONTAINER_NAME) \
+	--entrypoint bash \
 	-v $(CURDIR):/project \
 	-v $(CCACHE_DIR):/root/.ccache \
 	-e CCACHE_DIR=/root/.ccache
@@ -44,7 +45,7 @@ all: build
 build:
 	@echo "Building packages for $(TARGET)..."
 	@mkdir -p $(OUTPUT_DIR) $(CCACHE_DIR)
-	$(CONTAINER_RUNTIME) run $(CONTAINER_OPTS) $(YAP_IMAGE) build $(TARGET) /project
+	$(CONTAINER_RUNTIME) run $(CONTAINER_OPTS) $(YAP_IMAGE) -c "yap prepare $(TARGET) && yap build $(TARGET) /project"
 
 ## pull: Pull the YAP container image for the specified TARGET
 pull:
