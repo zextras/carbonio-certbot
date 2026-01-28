@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2023-2026 Zextras <https://www.zextras.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 pkgname="carbonio-certbot"
 pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
 pkgrel="2"

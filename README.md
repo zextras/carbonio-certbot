@@ -93,7 +93,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contribute to t
 ## License
 
 The build scripts, patches, and configuration files in this repository are licensed under the GNU Affero General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details.
-
-This repository does not contain the source code of the third-party project it packages. The build scripts download upstream sources at build time from its original location. The upstream project retains its own licenses, and the resulting built package/s are distributed under those original licenses. Please refer to the component's upstream documentation for specific licensing information.
-
-The packaged Certbot software itself is licensed under Apache-2.0 by the Electronic Frontier Foundation.
