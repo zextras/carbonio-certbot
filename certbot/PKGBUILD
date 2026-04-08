@@ -74,7 +74,7 @@ build__ubuntu_noble() {
 }
 
 build__rocky_8() {
-  pip3 install \
+  pip3.8 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
