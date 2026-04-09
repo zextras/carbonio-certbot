@@ -56,6 +56,8 @@ pipeline {
             steps {
                 echo 'Building deb/rpm packages'
                 buildStage(
+                    addCarbonioRepos: true,
+                    carbonioRepoCredentialId: 'artifactory-jenkins-gradle-properties-splitted',
                     prepare: true
                 )
             }
