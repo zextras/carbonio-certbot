@@ -4,7 +4,7 @@
 
 pkgname="carbonio-certbot"
 pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
-pkgrel="2"
+pkgrel="3"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
