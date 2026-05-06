@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 library(
-    identifier: 'jenkins-lib-common@1.3.1',
+    identifier: 'jenkins-lib-common@1.7.1',
     retriever: modernSCM([
         $class: 'GitSCMSource',
         remote: 'git@github.com:zextras/jenkins-lib-common.git',
@@ -56,6 +56,8 @@ pipeline {
             steps {
                 echo 'Building deb/rpm packages'
                 buildStage(
+                    addCarbonioRepos: true,
+                    carbonioRepoCredentialId: 'artifactory-jenkins-gradle-properties-splitted',
                     prepare: true
                 )
             }

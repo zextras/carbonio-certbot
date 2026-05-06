@@ -4,7 +4,7 @@
 
 pkgname="carbonio-certbot"
 pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
-pkgrel="2"
+pkgrel="3"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -14,6 +14,7 @@ arch=('x86_64')
 license=('Apache-2.0 AND MIT')
 
 depends=(
+  "carbonio-core"
   "python3"
   "python3-setuptools"
 )
@@ -74,7 +75,7 @@ build__ubuntu_noble() {
 }
 
 build__rocky_8() {
-  pip3 install \
+  pip3.8 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
