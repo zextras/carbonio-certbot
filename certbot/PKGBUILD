@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 pkgname="carbonio-certbot"
-pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
+pkgver="3.3.0" # renovate: datasource=pypi depName=certbot
 pkgrel="3"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
