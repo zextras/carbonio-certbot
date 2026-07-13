@@ -4,7 +4,7 @@
 
 pkgname="carbonio-certbot"
 pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
-pkgrel="3"
+pkgrel="5"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -52,6 +52,7 @@ build__ubuntu_jammy() {
   pip3 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
+    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
@@ -65,6 +66,7 @@ build__ubuntu_noble() {
   pip3 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
+    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
@@ -78,6 +80,7 @@ build__rocky_8() {
   pip3.8 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
+    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
@@ -91,6 +94,7 @@ build__rocky_9() {
   pip3 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
+    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
