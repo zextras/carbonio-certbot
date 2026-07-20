@@ -3,6 +3,7 @@
     "description": "Carbonio Cerbot",
     "buildDir": "/tmp/",
     "output": "artifacts",
+    "skipDeps": ["carbonio-core"],
     "projects": [
         {
             "name": "certbot"
