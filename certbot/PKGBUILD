@@ -2,9 +2,14 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-only
 
+_pyver_rocky_8="3.11"
+_pyver_rocky_9="3.11"
+_pyver_ubuntu_jammy="3.10"
+_pyver_ubuntu_noble="3.12"
+
 pkgname="carbonio-certbot"
-pkgver="2.11.1" # renovate: datasource=pypi depName=certbot
-pkgrel="5"
+pkgver="5.7.0" # renovate: datasource=pypi depName=certbot
+pkgrel="1"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -18,19 +23,25 @@ depends=(
   "python3"
   "python3-setuptools"
 )
-depends_rocky_8=(
-  "python38"
-  "python38-setuptools"
+depends__rocky_8=(
+  "carbonio-core"
+  "python${_pyver_rocky_8}"
+  "python${_pyver_rocky_8}-setuptools"
+)
+depends__rocky_9=(
+  "carbonio-core"
+  "python${_pyver_rocky_9}"
+  "python${_pyver_rocky_9}-setuptools"
 )
 makedepends__apt=(
   "python3-pkg-resources"
   "python3-pip"
 )
-makedepends__yum=(
-  "python3-pip"
-)
 makedepends__rocky_8=(
-  "python38-pip"
+  "python${_pyver_rocky_8}-pip"
+)
+makedepends__rocky_9=(
+  "python${_pyver_rocky_9}-pip"
 )
 
 source=(
@@ -41,24 +52,49 @@ source=(
   "certbot-wrapper.sh.in"
 )
 sha256sums=(
-  '5482e89a6fbe724dd6e3a88308edda8e475d1234534a7fe6187cd8b8ce5acb21'
+  'c9a5b5e096a12e414351e9534280e1e761a71590eb1f58f27c82efd6f87cf408'
   'e22053897ea862919763bc39f44bbf45e07c1c940082752168359990d2ceee14'
   '318fa71354a92483943863631fc5733e86d410fe5f020eca0bbfb0841e360bfc'
   'ee6fb7df85508c1b2bf9b83dd46b19031421aca466c1c5906a14f650b11721a8'
-  'e29913c2aafd4bad8393775abafd3c91cae202aed82ba865ef0165f873b62c34'
+  '33e932e9065a1ba432efd4e1819897013369ccdcbacc95525c3f69dbf605dff6'
 )
 
-build__ubuntu_jammy() {
-  pip3 install \
+build__rocky_8() {
+  "pip${_pyver_rocky_8}" install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
-    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
     "${pkgdir}/opt/zextras/common/bin/certbot"
 
-  sed -i "s/PYTHON_VER/3.10/g" \
+  sed -i "s/PYTHON_VERSION/${_pyver_rocky_8}/g" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+}
+
+build__rocky_9() {
+  "pip${_pyver_rocky_9}" install \
+    --only-binary cryptography \
+    certbot=="${pkgver}" \
+    --prefix="${pkgdir}/opt/zextras/common/certbot"
+
+  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+
+  sed -i "s/PYTHON_VERSION/${_pyver_rocky_9}/g" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+}
+
+build__ubuntu_jammy() {
+  pip3 install \
+    --only-binary cryptography \
+    certbot=="${pkgver}" \
+    --prefix="${pkgdir}/opt/zextras/common/certbot"
+
+  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
+    "${pkgdir}/opt/zextras/common/bin/certbot"
+
+  sed -i "s/PYTHON_VERSION/${_pyver_ubuntu_jammy}/g" \
     "${pkgdir}/opt/zextras/common/bin/certbot"
 }
 
@@ -66,41 +102,12 @@ build__ubuntu_noble() {
   pip3 install \
     --only-binary cryptography \
     certbot=="${pkgver}" \
-    "pyopenssl<25" \
     --prefix="${pkgdir}/opt/zextras/common/certbot"
 
   install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
     "${pkgdir}/opt/zextras/common/bin/certbot"
 
-  sed -i "s/PYTHON_VER/3.12/g" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-}
-
-build__rocky_8() {
-  pip3.8 install \
-    --only-binary cryptography \
-    certbot=="${pkgver}" \
-    "pyopenssl<25" \
-    --prefix="${pkgdir}/opt/zextras/common/certbot"
-
-  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-
-  sed -i "s/PYTHON_VER/3.8/g" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-}
-
-build__rocky_9() {
-  pip3 install \
-    --only-binary cryptography \
-    certbot=="${pkgver}" \
-    "pyopenssl<25" \
-    --prefix="${pkgdir}/opt/zextras/common/certbot"
-
-  install -Dm755 "${srcdir}/certbot-wrapper.sh.in" \
-    "${pkgdir}/opt/zextras/common/bin/certbot"
-
-  sed -i "s/PYTHON_VER/3.9/g" \
+  sed -i "s/PYTHON_VERSION/${_pyver_ubuntu_noble}/g" \
     "${pkgdir}/opt/zextras/common/bin/certbot"
 }
 
@@ -136,8 +143,8 @@ package() {
   rm "${pkgdir}"/opt/zextras/common/certbot/bin/normalizer
 
   # Apply custom paths
-  cd $(find ${pkgdir} -name "misc.py" | xargs dirname)
-  patch -Np1 -i "${srcdir}/carbonio-paths.patch"
+  cd "$(find "${pkgdir}" -name "misc.py" -print0 | xargs -0 dirname)" || exit 1
+  patch --no-backup-if-mismatch -Np1 -i "${srcdir}/carbonio-paths.patch"
 }
 
 postinst() {

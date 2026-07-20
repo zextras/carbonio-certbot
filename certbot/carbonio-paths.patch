@@ -1,6 +1,6 @@
---- a/misc.py	2023-01-12 15:49:31.088968276 +0000
-+++ b/misc.py	2023-01-12 15:52:18.833408420 +0000
-@@ -96,9 +96,9 @@
+--- a/misc.py	2026-07-20
++++ b/misc.py	2026-07-20
+@@ -90,9 +90,9 @@
      'logs': 'C:\\Certbot\\log',
  }
  LINUX_DEFAULT_FOLDERS = {
@@ -11,3 +11,5 @@
 +    'work': '/var/lib/carbonio-letsencrypt',
 +    'logs': '/var/log/carbonio/letsencrypt',
  }
+ 
+ def get_default_folder(folder_type: str) -> str:

@@ -4,17 +4,17 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 # python version
-py_ver=pythonPYTHON_VER
+pyver=pythonPYTHON_VERSION
 
 # set proper modules path
-PYTHONPATH="/opt/zextras/common/certbot/lib/${py_ver}/dist-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/lib/${py_ver}/site-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/lib64/${py_ver}/dist-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/lib64/${py_ver}/site-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/local/lib/${py_ver}/dist-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/local/lib/${py_ver}/site-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/local/lib64/${py_ver}/dist-packages:"
-PYTHONPATH+="/opt/zextras/common/certbot/local/lib64/${py_ver}/site-packages:"
+PYTHONPATH="/opt/zextras/common/certbot/lib/${pyver}/dist-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/lib/${pyver}/site-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/lib64/${pyver}/dist-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/lib64/${pyver}/site-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/local/lib/${pyver}/dist-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/local/lib/${pyver}/site-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/local/lib64/${pyver}/dist-packages:"
+PYTHONPATH+="/opt/zextras/common/certbot/local/lib64/${pyver}/site-packages:"
 export PYTHONPATH
 
 # main certbot entrypoint with args
