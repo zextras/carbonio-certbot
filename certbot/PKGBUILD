@@ -9,7 +9,7 @@ _pyver_ubuntu_noble="3.12"
 
 pkgname="carbonio-certbot"
 pkgver="5.7.0" # renovate: datasource=pypi depName=certbot
-pkgrel="1"
+pkgrel="2"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
 url="https://www.zextras.com/"
@@ -53,7 +53,7 @@ source=(
 )
 sha256sums=(
   'c9a5b5e096a12e414351e9534280e1e761a71590eb1f58f27c82efd6f87cf408'
-  'e22053897ea862919763bc39f44bbf45e07c1c940082752168359990d2ceee14'
+  '067d011becd3edcb7a0d96d38b46af40f9df21dc7cf9f96be84600d7858d4c4d'
   '318fa71354a92483943863631fc5733e86d410fe5f020eca0bbfb0841e360bfc'
   'ee6fb7df85508c1b2bf9b83dd46b19031421aca466c1c5906a14f650b11721a8'
   '33e932e9065a1ba432efd4e1819897013369ccdcbacc95525c3f69dbf605dff6'
