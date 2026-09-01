@@ -73,5 +73,11 @@ pipeline {
                 uploadStage()
             }
         }
+
+        stage('Semantic Release') {
+            steps {
+                semanticRelease()
+            }
+        }
     }
 }
