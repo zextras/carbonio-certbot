@@ -1,7 +1,7 @@
 {
   "branches": ["main"],
   "repositoryUrl": "https://github.com/zextras/carbonio-certbot",
-  "tagFormat": "v${version}",
+  "tagFormat": "${version}",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
