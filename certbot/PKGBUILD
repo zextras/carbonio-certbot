@@ -8,7 +8,7 @@ _pyver_ubuntu_jammy="3.10"
 _pyver_ubuntu_noble="3.12"
 
 pkgname="carbonio-certbot"
-pkgver="5.7.0" # renovate: datasource=pypi depName=certbot
+pkgver="5.8.0" # renovate: datasource=pypi depName=certbot
 pkgrel="2"
 pkgdesc="An ACME client for Carbonio"
 maintainer="Zextras <packages@zextras.com>"
